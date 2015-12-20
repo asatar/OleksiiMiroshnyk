@@ -1,6 +1,7 @@
 package chess.pieces;
 
-import chess.Player;
+
+import chess.bean.Player;
 
 /**
  * The 'Rook' class

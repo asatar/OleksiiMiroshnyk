@@ -1,5 +1,6 @@
 package chess;
 
+import chess.bean.Position;
 import org.junit.Test;
 
 import static junit.framework.Assert.*;

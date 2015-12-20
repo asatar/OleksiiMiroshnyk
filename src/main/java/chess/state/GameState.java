@@ -1,10 +1,12 @@
-package chess;
+package chess.state;
 
 
+import chess.bean.Player;
+import chess.bean.Position;
+import chess.bean.PositionPair;
 import chess.pieces.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class that represents the current state of the game.  Basically, what pieces are in which positions on the
@@ -20,13 +22,13 @@ public class GameState {
     /**
      * A map of board positions to pieces at that position
      */
-    private Map<Position, Piece> positionToPieceMap;
+    protected Map<Position, Piece> positionToPieceMap;
 
     /**
      * Create the game state.
      */
     public GameState() {
-        positionToPieceMap = new HashMap<Position, Piece>();
+        positionToPieceMap = new HashMap<>();
     }
 
     public Player getCurrentPlayer() {
@@ -93,12 +95,48 @@ public class GameState {
         return positionToPieceMap.get(position);
     }
 
+    public boolean isEmpty(Position position) {
+        return getPieceAt(position) == null;
+    }
+
     /**
      * Method to place a piece at a given position
      * @param piece The piece to place
      * @param position The position
      */
-    private void placePiece(Piece piece, Position position) {
+    protected void placePiece(Piece piece, Position position) {
         positionToPieceMap.put(position, piece);
+    }
+
+    /**
+     * Move!, and don't look back :)
+     * @param move position where to move the figure
+     */
+    public void makeMove(PositionPair move) {
+        Piece moved = positionToPieceMap.remove(move.getStart());
+        positionToPieceMap.put(move.getEnd(), moved);
+        //maybe changes current player in different place ?
+        currentPlayer = currentPlayer == Player.Black ? Player.White : Player.Black;
+    }
+
+    /**
+     * Creates editable game state tat is copy of current, changes to should not reflect to original game state
+     * @return returns editable state with initial state of current state
+     */
+    public EditableGameState getEditableGameState() {
+        return new EditableGameState(new HashMap<>(positionToPieceMap));
+    }
+
+    /**
+     * Get pieces with positions for player
+     * @param player player to get info for
+     * @return pieces for specified player with their positions. changes to this map will not reflect to origin
+     */
+    public Map<Position, Piece> getBoardMapFor(Player player) {
+        Map<Position, Piece> result = new HashMap<>();
+        positionToPieceMap.entrySet().stream().filter(positionPieceEntry -> positionPieceEntry.getValue().getOwner() == player).forEach(positionPieceEntry -> {
+            result.put(positionPieceEntry.getKey(), positionPieceEntry.getValue());
+        });
+        return result;
     }
 }

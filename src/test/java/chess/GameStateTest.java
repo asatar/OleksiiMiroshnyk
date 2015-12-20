@@ -1,8 +1,11 @@
 package chess;
 
+import chess.bean.Player;
+import chess.bean.Position;
 import chess.pieces.Piece;
 import chess.pieces.Queen;
 import chess.pieces.Rook;
+import chess.state.GameState;
 import org.junit.Before;
 import org.junit.Test;
 

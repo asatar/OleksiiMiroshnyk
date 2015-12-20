@@ -1,8 +1,14 @@
 package chess;
 
+import chess.bean.Player;
+import chess.bean.Position;
+import chess.bean.PositionPair;
+import chess.move.MoveFinder;
 import chess.pieces.Piece;
+import chess.state.GameState;
 
 import java.io.*;
+import java.util.List;
 
 /**
  * This class provides the basic CLI interface to the Chess game.
@@ -64,14 +70,41 @@ public class CLI {
                 } else if (input.equals("board")) {
                     writeOutput("Current Game:");
                 } else if (input.equals("list")) {
-                    writeOutput("====> List Is Not Implemented (yet) <====");
+                    generateMoves();
                 } else if (input.startsWith("move")) {
-                    writeOutput("====> Move Is Not Implemented (yet) <====");
+                    makeMove(input.substring("move".length()).trim());
                 } else {
                     writeOutput("I didn't understand that.  Type 'help' for a list of commands.");
                 }
             }
         }
+    }
+
+    private void makeMove(String way) {
+        String[] split = way.split(" ");
+        PositionPair desiredMove = new PositionPair(new Position(split[0]), new Position(split[1]));
+        List<PositionPair> possibleMoves = getPossibleMoves();
+        if(possibleMoves.contains(desiredMove)){
+            //special case for castling to be implemented somewhere here
+            gameState.makeMove(desiredMove);
+            //if no moves possible moves after move then checkmate!
+            if(getPossibleMoves().size()==0){
+                //make it more noticeable ?
+                writeOutput("Checkmate! "+gameState.getCurrentPlayer()+" has lost!");
+            }
+        }
+    }
+
+
+    private void generateMoves() {
+        List<PositionPair> movesFor = getPossibleMoves();
+        movesFor.sort((p1,p2)-> p1.getStart().toString().compareTo(p2.getStart().toString()));
+        movesFor.forEach(m->writeOutput(m.getStart()+" "+m.getEnd()));
+    }
+
+    private List<PositionPair> getPossibleMoves() {
+        Player currentPlayer = gameState.getCurrentPlayer();
+        return new MoveFinder(gameState).getPossibleMovesFor(currentPlayer);
     }
 
     private void doNewGame() {

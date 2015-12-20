@@ -1,4 +1,4 @@
-package chess;
+package chess.bean;
 
 /**
  * Describes a position on the Chess Board
@@ -11,11 +11,14 @@ public class Position {
     private int row;
     private char column;
 
+    private String columns = "abcdefgh";
+
+
     /**
      * Create a new position object
      *
      * @param column The column
-     * @param row The row
+     * @param row    The row
      */
     public Position(char column, int row) {
         this.row = row;
@@ -24,6 +27,7 @@ public class Position {
 
     /**
      * Create a new Position object by parsing the string
+     *
      * @param colrow The column and row to use.  I.e. "a1", "h7", etc.
      */
     public Position(String colrow) {
@@ -51,6 +55,15 @@ public class Position {
         if (row != position.row) return false;
 
         return true;
+    }
+
+    public Position move(int dx, int dy) {
+        int i = columns.indexOf(column);
+        if (i + dx < columns.length() && i + dx >= 0 && row + dy <= MAX_ROW && row + dy >= MIN_ROW) {
+            return new Position(columns.charAt(i + dx), row + dy);
+        } else {
+            return null;
+        }
     }
 
     @Override

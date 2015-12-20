@@ -1,4 +1,4 @@
-package chess;
+package chess.bean;
 
 /**
  * Which side of the board is being played
